@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TaskNest — Student Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- BACKGROUND BLOBS -->
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🪺</div>
+      <span class="brand-name">Task<b>Nest</b></span>
+    </div>
+    <div class="header-center">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search tasks…" oninput="renderAll()" />
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="date-chip" id="dateChip"></div>
+      <div class="avatar">YM</div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-label">Overview</div>
+      <div class="overview-cards">
+        <div class="ov-card ov-total">
+          <div class="ov-num" id="ov-total">0</div>
+          <div class="ov-text">Total Tasks</div>
+        </div>
+        <div class="ov-card ov-pending">
+          <div class="ov-num" id="ov-pending">0</div>
+          <div class="ov-text">Pending</div>
+        </div>
+        <div class="ov-card ov-done">
+          <div class="ov-num" id="ov-done">0</div>
+          <div class="ov-text">Completed</div>
+        </div>
+      </div>
+
+      <div class="sidebar-label" style="margin-top:28px">Progress</div>
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="38"/>
+          <circle class="ring-fill" id="ringFill" cx="50" cy="50" r="38"
+            stroke-dasharray="0 239"/>
+        </svg>
+        <div class="ring-pct" id="ringPct">0%</div>
+      </div>
+
+      <div class="sidebar-label" style="margin-top:28px">By Subject</div>
+      <div class="subject-bars" id="subjectBars"></div>
+    </aside>
+
+    <!-- CONTENT -->
+    <section class="content">
+
+      <!-- ADD TASK -->
+      <div class="add-panel">
+        <div class="add-title">✏️ &nbsp;Add New Task</div>
+        <div class="add-grid">
+          <div class="field">
+            <label>Task</label>
+            <input type="text" id="taskInput" placeholder="What do you need to do?" />
+          </div>
+          <div class="field">
+            <label>Subject</label>
+            <select id="subjectInput">
+              <option value="General">📌 General</option>
+              <option value="Math">🔢 Math</option>
+              <option value="Science">🔬 Science</option>
+              <option value="English">📖 English</option>
+              <option value="History">🏛️ History</option>
+              <option value="CS">💻 Computer Science</option>
+              <option value="Art">🎨 Art</option>
+              <option value="Other">📂 Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Due Date</label>
+            <input type="date" id="dueDateInput" />
+          </div>
+          <div class="field">
+            <label>Priority</label>
+            <div class="prio-row">
+              <button class="prio-btn pb-low active" data-p="low" onclick="setPrio('low')">Low</button>
+              <button class="prio-btn pb-mid" data-p="mid" onclick="setPrio('mid')">Mid</button>
+              <button class="prio-btn pb-high" data-p="high" onclick="setPrio('high')">High</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-add" onclick="addTask()">+ Add Task</button>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-row">
+        <button class="ftag active" onclick="setFilter('all',this)">All</button>
+        <button class="ftag" onclick="setFilter('todo',this)">📋 To Do</button>
+        <button class="ftag" onclick="setFilter('doing',this)">⚡ In Progress</button>
+        <button class="ftag" onclick="setFilter('done',this)">✅ Done</button>
+        <div class="sort-wrap">
+          <label>Sort:</label>
+          <select id="sortSelect" onchange="renderAll()">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="priority">Priority</option>
+            <option value="due">Due Date</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- TASK LIST -->
+      <div class="task-list" id="taskList"></div>
+      <div class="empty-msg" id="emptyMsg" style="display:none">
+        <div class="empty-emoji">🌿</div>
+        <p>No tasks found. Add one above!</p>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+  <!-- EDIT MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-title">✏️ Edit Task</div>
+      <input type="hidden" id="editId"/>
+      <div class="field">
+        <label>Task</label>
+        <input type="text" id="editTitle"/>
+      </div>
+      <div class="field">
+        <label>Subject</label>
+        <select id="editSubject">
+          <option value="General">📌 General</option>
+          <option value="Math">🔢 Math</option>
+          <option value="Science">🔬 Science</option>
+          <option value="English">📖 English</option>
+          <option value="History">🏛️ History</option>
+          <option value="CS">💻 CS</option>
+          <option value="Art">🎨 Art</option>
+          <option value="Other">📂 Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Due Date</label>
+        <input type="date" id="editDue"/>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

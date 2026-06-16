@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+
+        <h1>Dynamic Web Page</h1>
+
+        <!-- Change Text -->
+        <div class="box">
+            <h2 id="myText">Hello World!</h2>
+            <button onclick="changeText()">
+            Change Text</button>
+        </div>
+
+        <!-- Change Color -->
+        <div class="box">
+            <p id="colorText">Change my color!</p>
+            <button onclick="changeColor()">
+            Change Color</button>
+        </div>
+
+        <!-- Show Hide -->
+        <div class="box">
+            <p id="hideText">I can hide and show!</p>
+            <button onclick="toggleVisible()">
+            Show/Hide</button>
+        </div>
+
+        <!-- Add Items -->
+        <div class="box">
+            <input type="text" id="itemInput"
+            placeholder="Type something...">
+            <button onclick="addItem()">Add Item</button>
+            <ul id="itemList"></ul>
+        </div>
+
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
